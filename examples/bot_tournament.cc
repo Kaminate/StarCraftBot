@@ -2,20 +2,10 @@
 #include "sc2utils/sc2_manage_process.h"
 
 #include "bot_examples.h"
+#include "bot_goose.h"
+#include "bot_nate.h"
 
 #include <iostream>
-
-
-// Set this flag to true if you want to play against your bot.
-static bool PlayerOneIsHuman = false;
-
-class Human : public sc2::Agent {
-public:
-    void OnGameStart() final {
-        Debug()->DebugTextOut("Human");
-        Debug()->SendDebug();
-    }
-};
 
 int main(int argc, char* argv[]) {
     sc2::Coordinator coordinator;
@@ -23,23 +13,26 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int foo;
+
+    foo = sc2::GooseFoo();
+    std::cout << "foo: " << foo << std::endl;
+
+    foo = sc2::NateFoo();
+    std::cout << "foo: " << foo << std::endl;
+
     coordinator.SetMultithreaded(true);
-    if (PlayerOneIsHuman) {
-        coordinator.SetRealtime(true);
-    }
 
     // Add the custom bot, it will control the players.
-    sc2::TerranBot bot1, bot2;
-    Human human_bot;
+    sc2::ZergMultiplayerBot bot1;
+    sc2::Race race1 = sc2::Race::Zerg;
 
-    sc2::Agent* player_one = &bot1;
-    if (PlayerOneIsHuman) {
-        player_one = &human_bot;
-    }
+    sc2::TerranMultiplayerBot bot2;
+    sc2::Race race2 = sc2::Race::Terran;
 
     coordinator.SetParticipants({
-        CreateParticipant(sc2::Race::Terran, player_one),
-        CreateParticipant(sc2::Race::Terran, &bot2),
+        CreateParticipant(race1, &bot1),
+        CreateParticipant(race2, &bot2),
     });
 
     // Start the game.

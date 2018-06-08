@@ -8,6 +8,7 @@ add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 include_directories(SYSTEM "${PROJECT_BINARY_DIR}/generated")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/contrib/SDL-mirror/include")
 
+
 # Function to generate an example project with extra libraries
 function (example_project_extra project_name source_code extra_libs)
     message("Adding new example project ${project_name}, sources: ${source_code}, extra_libs: ${extra_libs}")
