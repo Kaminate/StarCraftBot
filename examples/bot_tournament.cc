@@ -13,21 +13,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int foo;
-
-    foo = sc2::GooseFoo();
-    std::cout << "foo: " << foo << std::endl;
-
-    foo = sc2::NateFoo();
-    std::cout << "foo: " << foo << std::endl;
 
     coordinator.SetMultithreaded(true);
 
-    // Add the custom bot, it will control the players.
-    sc2::ZergMultiplayerBot bot1;
+    sc2::GooseBot bot1;
     sc2::Race race1 = sc2::Race::Zerg;
 
-    sc2::TerranMultiplayerBot bot2;
+    sc2::NateBot bot2;
     sc2::Race race2 = sc2::Race::Terran;
 
     coordinator.SetParticipants({
@@ -35,7 +27,6 @@ int main(int argc, char* argv[]) {
         CreateParticipant(race2, &bot2),
     });
 
-    // Start the game.
     coordinator.LaunchStarcraft();
 
     bool do_break = false;

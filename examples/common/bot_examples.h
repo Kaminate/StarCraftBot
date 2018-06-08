@@ -6,6 +6,51 @@
 
 namespace sc2 {
 
+const int TargetSCVCount = 15;
+
+struct IsAttackable {
+    bool operator()( const Unit& unit );
+};
+
+struct IsFlying {
+    bool operator()( const Unit& unit );
+};
+
+//Ignores Overlords, workers, and structures
+struct IsArmy {
+    IsArmy( const ObservationInterface* obs );
+
+    bool operator()( const Unit& unit );
+
+    const ObservationInterface* observation_;
+};
+
+struct IsTownHall {
+    bool operator()( const Unit& unit );
+};
+
+struct IsVespeneGeyser {
+    bool operator()( const Unit& unit );
+};
+
+struct IsStructure {
+    IsStructure( const ObservationInterface* obs );;
+
+    bool operator()( const Unit& unit );
+
+    const ObservationInterface* observation_;
+};
+
+int CountUnitType( const ObservationInterface* observation, UnitTypeID unit_type );
+
+bool FindEnemyStructure( const ObservationInterface* observation, const Unit*& enemy_unit );
+
+bool GetRandomUnit( const Unit*& unit_out, const ObservationInterface* observation, UnitTypeID unit_type );
+
+
+
+
+
 class MarineMicroBot : public Agent {
 public:
     virtual void OnGameStart() final;
