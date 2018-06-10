@@ -4,29 +4,37 @@
 #include "bot_examples.h"
 #include "bot_goose.h"
 #include "bot_nate.h"
+#include "bot_ferviller.h"
 
 #include <iostream>
+#include <cassert>
+
+bool useAIEnemy = true;
+bool useBotAlly = true;
 
 int main(int argc, char* argv[]) {
+
     sc2::Coordinator coordinator;
     if (!coordinator.LoadSettings(argc, argv)) {
         return 1;
     }
-
-
     coordinator.SetMultithreaded(true);
+    std::vector<sc2::PlayerSetup> participants;
+    
+    sc2::FervillerBot fervillerBot;
+    sc2::NateBot nateBot;
+    sc2::GooseBot gooseBot;
 
-    sc2::GooseBot bot1;
-    sc2::Race race1 = sc2::Race::Zerg;
+    participants.push_back( CreateComputer( sc2::Race::Protoss, sc2::Difficulty::VeryHard ) );
+    //participants.push_back( CreateComputer( sc2::Race::Terran, sc2::Difficulty::VeryHard ) );
+    //participants.push_back( CreateComputer( sc2::Race::Zerg, sc2::Difficulty::VeryHard ) );
+    //participants.push_back( CreateParticipant( sc2::Race::Protoss, &fervillerBot ) );
+    //participants.push_back( CreateParticipant( sc2::Race::Terran, &nateBot ) );
+    participants.push_back( CreateParticipant( sc2::Race::Zerg, &gooseBot ) );
 
-    sc2::NateBot bot2;
-    sc2::Race race2 = sc2::Race::Terran;
+    assert( participants.size() == 2 );
 
-    coordinator.SetParticipants({
-        CreateParticipant(race1, &bot1),
-        CreateParticipant(race2, &bot2),
-    });
-
+    coordinator.SetParticipants( participants );
     coordinator.LaunchStarcraft();
 
     bool do_break = false;
@@ -41,8 +49,12 @@ int main(int argc, char* argv[]) {
         }
     }
     
-    bot1.Control()->DumpProtoUsage();
-    bot2.Control()->DumpProtoUsage();
+    for( sc2::Agent* agent : {
+        ( sc2::Agent* )&nateBot,
+        ( sc2::Agent* )&gooseBot,
+        ( sc2::Agent* )&fervillerBot,
+        } )
+        agent->Control()->DumpProtoUsage();
 
     return 0;
 }

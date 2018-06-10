@@ -626,6 +626,7 @@ void MultiplayerBot::OnNuclearLaunchDetected() {
     nuke_detected = true;
     nuke_detected_frame = observation->GetGameLoop();
 }
+
 //Manages attack and retreat patterns, as well as unit micro
 void ProtossMultiplayerBot::ManageArmy() {
     const ObservationInterface* observation = Observation();
