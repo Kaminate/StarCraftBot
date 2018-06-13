@@ -7,41 +7,120 @@
 
 namespace sc2 {
 
+    enum NodeStatus {
+        True = 1,
+        False = 2,
+        Running = 3,
+        New = 4,
+    };
 
+    struct BehaviorTreeNode {
+    public:
+        virtual void Execute() = 0;
+        void DeleteChildren();
+        void ResetChildren();
+        void AssignBot(class GooseBot*);
+        NodeStatus Status = NodeStatus::New;
+        std::vector<BehaviorTreeNode*> Children;
+        GooseBot* bot;
+    };
+#pragma region composite_nodes
+    struct NodeRepeatWhileTrue : public BehaviorTreeNode {
+        void Execute();
+    };
 
+    struct NodeRepeat : public BehaviorTreeNode {
+        void Execute();
+    };
 
-class GooseBot : public MultiplayerBot {
-public:
-    bool mutalisk_build_ = false;
+    struct NodeAny : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    bool TryBuildDrone();
+    struct NodeEvery : public BehaviorTreeNode {
+        void Execute();
+    };
+#pragma endregion Loops and conditionals
+#pragma region decorator_nodes
+    // Decorator nodes
+    struct NodeNot : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    bool TryBuildOverlord();
+    struct NodeTrue : public BehaviorTreeNode {
+        void Execute();
+    };
+#pragma endregion Basically a not nad a true, hahah
+#pragma region leaf_nodes
+    // Leaf nodes
+    struct NodeAccrueEconomy : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    void BuildArmy();
+    struct NodeAccrueProduction : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    bool TryBuildOnCreep( AbilityID ability_type_for_structure, UnitTypeID unit_type );
+    struct NodeAccrueInformation : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    void BuildOrder();
+    struct NodeAccrueArmy : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    void ManageUpgrades();
+    struct NodeAccrueForce : public BehaviorTreeNode {
+        void Execute();
+    };
 
-    void ManageArmy();
+    struct NodeMoveRandomly : public BehaviorTreeNode {
+        void Execute();
+    };
+#pragma endregion Perform actions
 
-    void TryInjectLarva();
+    class GooseBot : public MultiplayerBot {
+    public:
+        bool mutalisk_build_ = false;
 
-    bool TryBuildExpansionHatch();
+        bool TryBuildDrone();
 
-    bool BuildExtractor();
+        bool TryBuildOverlord();
 
-    virtual void OnStep() final;
+        void BuildArmy();
 
-    virtual void OnUnitIdle( const Unit* unit ) override;
+        bool TryBuildOnCreep(AbilityID ability_type_for_structure, UnitTypeID unit_type);
 
-private:
-    std::vector<UNIT_TYPEID> hatchery_types = { UNIT_TYPEID::ZERG_HATCHERY, UNIT_TYPEID::ZERG_HIVE, UNIT_TYPEID::ZERG_LAIR };
+        void BuildOrder();
 
-};
+        void ManageUpgrades();
+
+        void ManageArmy();
+
+        void TryInjectLarva();
+
+        bool TryBuildExpansionHatch();
+
+        bool BuildExtractor();
+
+        virtual void OnStep() final;
+
+        virtual void OnUnitIdle(const Unit* unit) override;
+
+        void Heartbeat();
+
+        void Initialize();
+
+        bool CanPathToLocation(const sc2::Unit*, sc2::Point2D&);
+
+        BehaviorTreeNode* BuildOrderMoveRandomly();
+
+    private:
+        std::vector<UNIT_TYPEID> hatchery_types = { UNIT_TYPEID::ZERG_HATCHERY, UNIT_TYPEID::ZERG_HIVE, UNIT_TYPEID::ZERG_LAIR };
+
+        bool Initialized = false;
+
+        BehaviorTreeNode* Root;
+    };
 
 
 
